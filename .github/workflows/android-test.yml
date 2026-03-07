@@ -4,11 +4,20 @@ on:
   push:
   pull_request:
 
+permissions:
+  contents: write
+
 jobs:
   android:
     name: Run Android Appium Tests
     runs-on: ubuntu-latest
     timeout-minutes: 45
+
+    env:
+      NODE_VERSION: 20
+      JAVA_VERSION: 17
+      ANDROID_API: 33
+      DEVICE_PROFILE: pixel_6
 
     steps:
       - name: Checkout repository
@@ -17,16 +26,15 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: ${{ env.NODE_VERSION }}
 
       - name: Setup Java
         uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: 17
+          java-version: ${{ env.JAVA_VERSION }}
 
-      # Enable hardware acceleration for Android emulator
-      - name: Enable KVM
+      - name: Enable KVM acceleration
         run: |
           echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' \
           | sudo tee /etc/udev/rules.d/99-kvm4all.rules
@@ -44,13 +52,14 @@ jobs:
       - name: Download F-Droid APK
         run: npm run fetch-apk
 
-      - name: Start emulator and execute tests
+      - name: Start emulator and run tests
         uses: ReactiveCircus/android-emulator-runner@v2
         with:
-          api-level: 33
+          api-level: ${{ env.ANDROID_API }}
           arch: x86_64
           target: google_apis
-          profile: pixel_6
+          profile: ${{ env.DEVICE_PROFILE }}
+          disable-animations: true
           emulator-options: >
             -no-window
             -no-audio
@@ -58,11 +67,16 @@ jobs:
             -gpu swiftshader_indirect
             -netdelay none
             -netspeed full
-          disable-animations: true
           script: |
+            echo "Connected devices:"
             adb devices
+
+            echo "Starting Appium..."
             nohup appium --log appium.log > /dev/null 2>&1 &
+
             sleep 10
+
+            echo "Running tests..."
             npm test
 
       - name: Generate Allure report
@@ -73,17 +87,18 @@ jobs:
         with:
           name: screenshots
           path: screenshots
+          if-no-files-found: ignore
 
       - name: Upload Allure report artifact
         uses: actions/upload-artifact@v4
         with:
           name: allure-report
           path: reports
+          if-no-files-found: ignore
 
-      # Optional: publish report online
       - name: Deploy Allure report to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v4
         if: github.ref == 'refs/heads/main'
+        uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: reports/allure-report
