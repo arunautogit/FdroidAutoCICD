@@ -24,10 +24,17 @@ jobs:
           distribution: temurin
           java-version: '17'
 
-      - name: Install global tools
+      # Enable hardware acceleration for emulator
+      - name: Enable KVM
         run: |
-          npm install -g appium@2.11.0
-          appium driver install --source=npm appium-uiautomator2-driver@3.7.3
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
+      - name: Install Appium
+        run: |
+          npm install -g appium
+          appium driver install uiautomator2
 
       - name: Install project dependencies
         run: npm install
@@ -42,11 +49,12 @@ jobs:
           arch: x86_64
           target: google_apis
           profile: pixel_6
-          emulator-options: "-no-window -no-audio -no-boot-anim -gpu swiftshader_indirect -netdelay none -netspeed full"
+          emulator-options: -no-window -no-audio -no-boot-anim -gpu swiftshader_indirect -netdelay none -netspeed full
+          disable-animations: true
           script: |
-            npm run fetch-apk
-            nohup appium --allow-cors --log-level info:debug --log appium.log > /dev/null 2>&1 &
-            sleep 5
+            adb devices
+            nohup appium --log appium.log > /dev/null 2>&1 &
+            sleep 10
             npm test
 
       - name: Generate Allure report
