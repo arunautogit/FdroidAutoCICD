@@ -1,0 +1,11 @@
+node_modules/
+reports/allure-report/
+reports/allure-results/
+screenshots/*.png
+apk/app.apk
+appium.log
+.idea/
+.vscode/
+*.tmp
+*.log
+package-lock.json

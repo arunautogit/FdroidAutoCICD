@@ -1,0 +1,29 @@
+{
+  "name": "android-appium-fdroid-automation",
+  "version": "1.0.0",
+  "description": "Android automation framework using WebdriverIO, Appium, and Allure to launch an F-Droid APK locally and in GitHub Actions.",
+  "main": "wdio.conf.js",
+  "license": "MIT",
+  "scripts": {
+    "fetch-apk": "node fetch-apk.js",
+    "start-appium": "node start-appium.js",
+    "test": "node standalone-test.js",
+    "generate-report": "allure generate reports/allure-results -o reports/allure-report --clean",
+    "open-report": "allure open reports/allure-report"
+  },
+  "devDependencies": {
+    "@wdio/allure-reporter": "^8.36.0",
+    "@wdio/cli": "^8.36.0",
+    "@wdio/local-runner": "^8.36.0",
+    "@wdio/mocha-framework": "^8.36.0",
+    "@wdio/spec-reporter": "^8.36.0",
+    "allure-commandline": "^2.27.0",
+    "appium": "^2.11.0",
+    "appium-uiautomator2-driver": "^3.7.3",
+    "chromedriver": "^125.0.0",
+    "allure-js-commons": "^3.0.0-beta.5",
+    "dotenv": "^16.4.5",
+    "mocha": "^10.2.0",
+    "webdriverio": "^8.36.0"
+  }
+}
