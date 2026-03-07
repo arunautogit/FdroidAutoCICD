@@ -3,6 +3,8 @@ name: Android Appium Tests
 on:
   push:
   pull_request:
+  schedule:
+    - cron: "30 0 * * *"   # Runs daily at 06:00 AM IST
 
 permissions:
   contents: write
