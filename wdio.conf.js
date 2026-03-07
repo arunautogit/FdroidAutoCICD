@@ -7,7 +7,7 @@ const capabilities = require('./config/capabilities');
 const allure = require('@wdio/allure-reporter').default;
 
 const screenshotDir = path.resolve(__dirname, 'screenshots');
-const allureResultsDir = path.resolve(__dirname, 'reports', 'allure-results');
+const allureResultsDir = path.resolve(__dirname, 'allure-results');
 
 /**
  * Ensure required directories exist before run

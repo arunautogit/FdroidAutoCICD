@@ -8,7 +8,7 @@ delete process.env.NODE_OPTIONS; // avoid injected loaders
 
 const caps = require('./config/capabilities')[0];
 const screenshotDir = path.resolve(__dirname, 'screenshots');
-const allureResultsDir = path.resolve(__dirname, 'reports', 'allure-results');
+const allureResultsDir = path.resolve(__dirname, 'allure-results');
 
 function ensureDirs() {
   [screenshotDir, allureResultsDir].forEach((dir) => fs.mkdirSync(dir, { recursive: true }));
