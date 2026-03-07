@@ -26,8 +26,8 @@ jobs:
 
       - name: Install global tools
         run: |
-          npm install -g appium@2.x
-          appium driver install uiautomator2
+          npm install -g appium@2.11.0
+          appium driver install --source=npm appium-uiautomator2-driver@3.7.3
 
       - name: Install project dependencies
         run: npm install
